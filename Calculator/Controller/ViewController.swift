@@ -140,7 +140,7 @@ class ViewController: UIViewController {
                         guard let elementDouble = Double(element) else {
                             return
                         }
-                        if element.count <= maxChar && element.contains(".") && elementDouble.fraction == 0 {
+                        if element.count <= maxCharDefault && element.contains(".") && elementDouble.fraction == 0 {
                             let fractionDigits = element.split(separator: ".").last ?? ""
                             expressionElements.append(elementDouble.decimalNotation + decimalSeparator + fractionDigits)
                         } else {

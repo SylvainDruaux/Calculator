@@ -21,107 +21,128 @@ final class Calculator {
         
         switch mathInput {
         case ".": // If mathInput is a separator
-            guard let lastElement = mathExpressionElements.last else { // If expression is empty
-                mathExpressionElements.append("0.")
-                return mathExpressionElements
-            }
-            
-            guard result == nil else { // If previous result, 0. replaces the previous result
-                result = nil
-                mathExpressionElements.removeAll()
-                mathExpressionElements.append("0.")
-                return mathExpressionElements
-            }
-            
-            switch lastElement {
-            case _ where lastElement.contains("."): // If lastElement contains (or ends with) a separator
-                return mathExpressionElements
-            case _ where lastElement.isNumber && !lastElement.contains("."): // If lastElement is a number without any separator
-                let newLastElement = lastElement + mathInput
-                mathExpressionElements.removeLast()
-                mathExpressionElements.append(newLastElement)
-            case _ where lastElement.isArithmeticOperator: // If lastElement is an operand
-                mathExpressionElements.append("0.")
-            default:
-                break
-            }
-            
+            return prepareFromSperator(mathInput)
+                        
         case _ where mathInput.isNumber: // If mathInput is a number
-            guard let lastElement = mathExpressionElements.last else { // If expression is empty
-                mathExpressionElements.append(mathInput)
-                return mathExpressionElements
-            }
-            
-            guard result == nil else { // If previous result, a new number replaces the previous result
-                result = nil
-                mathExpressionElements.removeAll()
-                mathExpressionElements.append(mathInput)
-                return mathExpressionElements
-            }
-            
-            guard lastElement.count < maxChar else { // If lastElement = maxChar, no change
-                return mathExpressionElements
-            }
-            
-            switch lastElement {
-            case _ where lastElement == "-0": // If lastElement is -0
-                var newLastElement = lastElement
-                newLastElement.removeLast()
-                mathExpressionElements.removeLast()
-                mathExpressionElements.append(newLastElement + mathInput)
-            case _ where lastElement.last == "." || lastElement.isNumber: // If lastElement is a number with or without a separator
-                let newLastElement = lastElement + mathInput
-                mathExpressionElements.removeLast()
-                mathExpressionElements.append(newLastElement)
-            case _ where lastElement.isArithmeticOperator: // If lastElement is an operand
-                mathExpressionElements.append(mathInput)
-            default:
-                break
-            }
+            return prepareFromNumber(mathInput, maxChar)
             
         case _ where mathInput.isArithmeticOperator: // If mathInput is an operand
-            guard let lastElement = mathExpressionElements.last else { // If expression is empty
+            return prepareFromArithmeticOperator(mathInput)
+            
+        default:
+            break
+        }
+        return mathExpressionElements
+    }
+    
+    private func prepareFromSperator(_ mathInput: String) -> [String] {
+        guard let lastElement = mathExpressionElements.last else { // If expression is empty
+            mathExpressionElements.append("0.")
+            return mathExpressionElements
+        }
+        
+        guard result == nil else { // If previous result, 0. replaces the previous result
+            result = nil
+            mathExpressionElements.removeAll()
+            mathExpressionElements.append("0.")
+            return mathExpressionElements
+        }
+        
+        switch lastElement {
+        case _ where lastElement.contains("."): // If lastElement contains (or ends with) a separator
+            return mathExpressionElements
+        case _ where lastElement.isNumber && !lastElement.contains("."): // If lastElement is a number without any separator
+            let newLastElement = lastElement + mathInput
+            mathExpressionElements.removeLast()
+            mathExpressionElements.append(newLastElement)
+        case _ where lastElement.isArithmeticOperator: // If lastElement is an operand
+            mathExpressionElements.append("0.")
+        default:
+            break
+        }
+        return mathExpressionElements
+    }
+    
+    private func prepareFromNumber(_ mathInput: String, _ maxChar: Int) -> [String] {
+        guard let lastElement = mathExpressionElements.last else { // If expression is empty
+            mathExpressionElements.append(mathInput)
+            return mathExpressionElements
+        }
+        
+        guard result == nil else { // If previous result, a new number replaces the previous result
+            result = nil
+            mathExpressionElements.removeAll()
+            mathExpressionElements.append(mathInput)
+            return mathExpressionElements
+        }
+        
+        guard lastElement.count < maxChar else { // If lastElement = maxChar, no change
+            return mathExpressionElements
+        }
+        
+        switch lastElement {
+        case _ where lastElement == "-0": // If lastElement is -0
+            var newLastElement = lastElement
+            newLastElement.removeLast()
+            mathExpressionElements.removeLast()
+            mathExpressionElements.append(newLastElement + mathInput)
+        case _ where lastElement.last == "." || lastElement.isNumber: // If lastElement is a number with or without a separator
+            let newLastElement = lastElement + mathInput
+            mathExpressionElements.removeLast()
+            mathExpressionElements.append(newLastElement)
+        case _ where lastElement.isArithmeticOperator: // If lastElement is an operand
+            mathExpressionElements.append(mathInput)
+        default:
+            break
+        }
+        return mathExpressionElements
+    }
+    
+    private func prepareFromArithmeticOperator(_ mathInput: String) -> [String] {
+        guard let lastElement = mathExpressionElements.last else { // If expression is empty
+            mathExpressionElements.append("0")
+            mathExpressionElements.append(mathInput)
+            return mathExpressionElements
+        }
+        
+        guard result == nil else { // If previous result, the previous result replaces the whole expression (except if is an infinite number)
+            if result!.isInfinite || result!.isNaN {
+                mathExpressionElements.removeAll()
                 mathExpressionElements.append("0")
                 mathExpressionElements.append(mathInput)
-                return mathExpressionElements
-            }
-            
-            guard result == nil else { // If previous result, the previous result replaces the whole expression (except if is an infinite number)
-                if result!.isInfinite || result!.isNaN {
-                    mathExpressionElements.removeAll()
-                    mathExpressionElements.append("0")
-                    mathExpressionElements.append(mathInput)
+            } else {
+                mathExpressionElements.removeAll()
+                let resultStr = "\(result!)"
+                if result?.fraction == 0 {
+                    let firstElement = String(resultStr.split(separator: ".").first!)
+                    mathExpressionElements.append(firstElement)
                 } else {
-                    mathExpressionElements.removeAll()
-                    mathExpressionElements.append("\(result!)")
-                    mathExpressionElements.append(mathInput)
+                    mathExpressionElements.append(resultStr)
                 }
-                result = nil
-                return mathExpressionElements
+                mathExpressionElements.append(mathInput)
             }
-            
-            switch lastElement {
-            case _ where lastElement.last == ".": // If lastElement ends with a separator
-                var newLastElement = lastElement
-                newLastElement.removeLast()
+            result = nil
+            return mathExpressionElements
+        }
+        
+        switch lastElement {
+        case _ where lastElement.last == ".": // If lastElement ends with a separator
+            var newLastElement = lastElement
+            newLastElement.removeLast()
+            mathExpressionElements.removeLast()
+            mathExpressionElements.append(newLastElement)
+            mathExpressionElements.append(mathInput)
+        case _ where lastElement.isNumber: // If lastElement is a number (not ending by a separator)
+            let lastElementDouble = Double(lastElement)
+            if lastElementDouble?.fraction == 0 {
+                let newLastElement = String(lastElement.split(separator: ".").first!)
                 mathExpressionElements.removeLast()
                 mathExpressionElements.append(newLastElement)
-                mathExpressionElements.append(mathInput)
-            case _ where lastElement.isNumber: // If lastElement is a number (not ending by a separator)
-                let lastElementDouble = Double(lastElement)
-                if lastElementDouble?.fraction == 0 {
-                    let newLastElement = String(lastElement.split(separator: ".").first!)
-                    mathExpressionElements.removeLast()
-                    mathExpressionElements.append(newLastElement)
-                }
-                mathExpressionElements.append(mathInput)
-            case _ where lastElement.isArithmeticOperator: // If lastElement is an operand
-                mathExpressionElements.removeLast()
-                mathExpressionElements.append(mathInput)
-            default:
-                break
             }
-            
+            mathExpressionElements.append(mathInput)
+        case _ where lastElement.isArithmeticOperator: // If lastElement is an operand
+            mathExpressionElements.removeLast()
+            mathExpressionElements.append(mathInput)
         default:
             break
         }
