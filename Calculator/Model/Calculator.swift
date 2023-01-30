@@ -277,8 +277,14 @@ final class Calculator {
                 result = nil
                 return mathExpressionElements
             } else {
-                element = "\(result!)"
                 mathExpressionElements.removeAll()
+                let resultStr = "\(result!)"
+                if result?.fraction == 0 {
+                    let firstElement = String(resultStr.split(separator: ".").first!)
+                    element = firstElement
+                } else {
+                    element = resultStr
+                }
                 result = nil
             }
         } else {

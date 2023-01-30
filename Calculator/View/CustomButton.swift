@@ -1,5 +1,5 @@
 //
-//  MyButton.swift
+//  CustomButton.swift
 //  Calculator
 //
 //  Created by Sylvain Druaux on 30/12/2022.
