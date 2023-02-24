@@ -165,12 +165,14 @@ class ViewController: UIViewController {
                 guard let lastNumberDouble = Double(lastNumber) else {
                     return
                 }
-                if lastNumber.count <= maxChar && lastNumber.contains(".") && lastNumberDouble.fraction == 0 {
+                if lastNumber.count <= maxChar && lastNumber.contains(".") {
                     let fractionDigits = lastNumber.split(separator: ".").last ?? ""
-                    outputLabel.text = lastNumberDouble.decimalNotation + decimalSeparator + fractionDigits
+                    guard let lastNumberInteger = lastNumberDouble.decimalNotation.split(separator: decimalSeparator).first else {
+                        return
+                    }
+                    outputLabel.text = lastNumberInteger + decimalSeparator + fractionDigits
                 } else {
-                    currentInputNumber = lastNumberDouble
-                    outputLabel.text = currentInputNumber.displayAdjusted(maxChar)
+                    outputLabel.text = lastNumberDouble.displayAdjusted(maxChar)
                 }
             }
             scrollTextView()

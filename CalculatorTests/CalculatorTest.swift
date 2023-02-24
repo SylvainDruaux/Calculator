@@ -10,10 +10,15 @@ import XCTest
 
 final class CalculatorTest: XCTestCase {
     var calc: Calculator!
-
+    
+    private lazy var decimalSeparator: String = "."
+        
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         try super.setUpWithError()
+        // Setting the separator var ("." or "," based on locale)
+        let numberFormatter = NumberFormatter()
+        decimalSeparator = numberFormatter.locale.decimalSeparator ?? "."
         calc = Calculator()
     }
 
@@ -111,10 +116,15 @@ final class CalculatorTest: XCTestCase {
     }
     
     func testMinusPlus() throws {
-        let num1 = calc.prepareExpression("-0.25")
+        let num1 = calc.prepareExpression("-0\(decimalSeparator)25")
         let result = calc.getPlusMinus()
         
         XCTAssertEqual(num1, ["-0.25"])
         XCTAssertEqual(result, ["0.25"])
+    }
+    
+    func testSeparator() throws {
+        let num = calc.prepareExpression("\(decimalSeparator)")
+        XCTAssertEqual(num, ["0."])
     }
 }
