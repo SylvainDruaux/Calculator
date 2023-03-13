@@ -4,7 +4,7 @@ An elegant iOS MVC calculator app, inspired by the official one from Apple.
 
 |United States|France|
 |--|--|
-|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-USA.png" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-FRA.png" width="200">|
+|<img src="https://github.com/SylvainDruaux/Calculator/blob/dev/Resources/iPhone-14-Pro-Portrait-USA.png" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/dev/Resources/iPhone-14-Pro-Portrait-FRA.png" width="200">|
 
 ## Requirements
 
@@ -49,13 +49,13 @@ This application strives to stick to the MVC architecture pattern.
 
 |United States|France|
 |--|--|
-|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-USA.gif" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-FRA.gif" width="200">|
+|<img src="https://github.com/SylvainDruaux/Calculator/blob/dev/Resources/Demo-iPhone-14-Pro-Portrait-USA.gif" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/dev/Resources/Demo-iPhone-14-Pro-Portrait-FRA.gif" width="200">|
 
 ### Landscape mode
 
 |United States|France|
 |--|--|
-|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Landscape-USA.png" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Landscape-FRA.png" width="200">|
+|<img src="https://github.com/SylvainDruaux/Calculator/blob/dev/Resources/iPhone-14-Pro-Landscape-USA.png" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/dev/Resources/iPhone-14-Pro-Landscape-FRA.png" width="200">|
 
 
 ## License
