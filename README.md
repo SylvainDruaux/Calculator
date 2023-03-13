@@ -55,7 +55,7 @@ This application strives to stick to the MVC architecture pattern.
 
 |United States|France|
 |--|--|
-|<img src="https://github.com/SylvainDruaux/Calculator/blob/dev/Resources/iPhone-14-Pro-Landscape-USA.png" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/dev/Resources/iPhone-14-Pro-Landscape-FRA.png" width="200">|
+|<img src="https://github.com/SylvainDruaux/Calculator/blob/dev/Resources/iPhone-14-Pro-Landscape-USA.png" width="300">|<img src="https://github.com/SylvainDruaux/Calculator/blob/dev/Resources/iPhone-14-Pro-Landscape-FRA.png" width="300">|
 
 
 ## License
