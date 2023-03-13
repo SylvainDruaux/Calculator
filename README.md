@@ -12,7 +12,7 @@ An elegant iOS MVC calculator app, inspired by the official one from Apple.
 
 ## Usage
 
-This application works like the official Apple iOS Calculator, but only with fundamental arithmetic operations.
+This application works like the official Apple iOS Calculator, but only with basic arithmetic operations.
 It also has a history of past expressions, which can be cleaned by double tapping on the AC button.
 
 ## Features
