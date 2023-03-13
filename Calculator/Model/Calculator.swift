@@ -10,7 +10,6 @@ import Foundation
 final class Calculator {
     
     // MARK: - Properties
-    // Expression in mathematical format, separated by elements
     private var mathExpressionElements = [String]()
     
     private var result: Double?
@@ -20,13 +19,13 @@ final class Calculator {
         let mathInput = input.mathExpression
         
         switch mathInput {
-        case ".": // If mathInput is a separator
+        case ".":
             return prepareFromSperator(mathInput)
                         
-        case _ where mathInput.isNumber: // If mathInput is a number
+        case _ where mathInput.isNumber:
             return prepareFromNumber(mathInput, maxChar)
             
-        case _ where mathInput.isArithmeticOperator: // If mathInput is an operand
+        case _ where mathInput.isArithmeticOperator:
             return prepareFromArithmeticOperator(mathInput)
             
         default:
@@ -36,12 +35,12 @@ final class Calculator {
     }
     
     private func prepareFromSperator(_ mathInput: String) -> [String] {
-        guard let lastElement = mathExpressionElements.last else { // If expression is empty
+        guard let lastElement = mathExpressionElements.last else {
             mathExpressionElements.append("0.")
             return mathExpressionElements
         }
         
-        guard result == nil else { // If previous result, 0. replaces the previous result
+        guard result == nil else {
             result = nil
             mathExpressionElements.removeAll()
             mathExpressionElements.append("0.")
@@ -49,13 +48,13 @@ final class Calculator {
         }
         
         switch lastElement {
-        case _ where lastElement.contains("."): // If lastElement contains (or ends with) a separator
+        case _ where lastElement.contains("."):
             return mathExpressionElements
-        case _ where lastElement.isNumber && !lastElement.contains("."): // If lastElement is a number without any separator
+        case _ where lastElement.isNumber && !lastElement.contains("."):
             let newLastElement = lastElement + mathInput
             mathExpressionElements.removeLast()
             mathExpressionElements.append(newLastElement)
-        case _ where lastElement.isArithmeticOperator: // If lastElement is an operand
+        case _ where lastElement.isArithmeticOperator:
             mathExpressionElements.append("0.")
         default:
             break
@@ -64,33 +63,33 @@ final class Calculator {
     }
     
     private func prepareFromNumber(_ mathInput: String, _ maxChar: Int) -> [String] {
-        guard let lastElement = mathExpressionElements.last else { // If expression is empty
+        guard let lastElement = mathExpressionElements.last else {
             mathExpressionElements.append(mathInput)
             return mathExpressionElements
         }
         
-        guard result == nil else { // If previous result, a new number replaces the previous result
+        guard result == nil else {
             result = nil
             mathExpressionElements.removeAll()
             mathExpressionElements.append(mathInput)
             return mathExpressionElements
         }
         
-        guard lastElement.count < maxChar else { // If lastElement = maxChar, no change
+        guard lastElement.count < maxChar else {
             return mathExpressionElements
         }
         
         switch lastElement {
-        case _ where lastElement == "-0": // If lastElement is -0
+        case _ where lastElement == "0" || lastElement == "-0":
             var newLastElement = lastElement
             newLastElement.removeLast()
             mathExpressionElements.removeLast()
             mathExpressionElements.append(newLastElement + mathInput)
-        case _ where lastElement.last == "." || lastElement.isNumber: // If lastElement is a number with or without a separator
+        case _ where lastElement.last == "." || lastElement.isNumber:
             let newLastElement = lastElement + mathInput
             mathExpressionElements.removeLast()
             mathExpressionElements.append(newLastElement)
-        case _ where lastElement.isArithmeticOperator: // If lastElement is an operand
+        case _ where lastElement.isArithmeticOperator:
             mathExpressionElements.append(mathInput)
         default:
             break
@@ -99,21 +98,21 @@ final class Calculator {
     }
     
     private func prepareFromArithmeticOperator(_ mathInput: String) -> [String] {
-        guard let lastElement = mathExpressionElements.last else { // If expression is empty
+        guard let lastElement = mathExpressionElements.last else {
             mathExpressionElements.append("0")
             mathExpressionElements.append(mathInput)
             return mathExpressionElements
         }
         
-        guard result == nil else { // If previous result, the previous result replaces the whole expression (except if is an infinite number)
-            if result!.isInfinite || result!.isNaN {
+        if let result = self.result {
+            if result.isInfinite || result.isNaN {
                 mathExpressionElements.removeAll()
                 mathExpressionElements.append("0")
                 mathExpressionElements.append(mathInput)
             } else {
                 mathExpressionElements.removeAll()
-                let resultStr = "\(result!)"
-                if result?.fraction == 0 {
+                let resultStr = String(result)
+                if !resultStr.contains("e"), result.fraction == 0 {
                     let firstElement = String(resultStr.split(separator: ".").first!)
                     mathExpressionElements.append(firstElement)
                 } else {
@@ -121,26 +120,26 @@ final class Calculator {
                 }
                 mathExpressionElements.append(mathInput)
             }
-            result = nil
+            self.result = nil
             return mathExpressionElements
         }
         
         switch lastElement {
-        case _ where lastElement.last == ".": // If lastElement ends with a separator
+        case _ where lastElement.last == ".":
             var newLastElement = lastElement
             newLastElement.removeLast()
             mathExpressionElements.removeLast()
             mathExpressionElements.append(newLastElement)
             mathExpressionElements.append(mathInput)
-        case _ where lastElement.isNumber: // If lastElement is a number (not ending by a separator)
+        case _ where lastElement.isNumber:
             let lastElementDouble = Double(lastElement)
-            if lastElementDouble?.fraction == 0 {
+            if !lastElement.contains("e"), lastElementDouble?.fraction == 0 {
                 let newLastElement = String(lastElement.split(separator: ".").first!)
                 mathExpressionElements.removeLast()
                 mathExpressionElements.append(newLastElement)
             }
             mathExpressionElements.append(mathInput)
-        case _ where lastElement.isArithmeticOperator: // If lastElement is an operand
+        case _ where lastElement.isArithmeticOperator:
             mathExpressionElements.removeLast()
             mathExpressionElements.append(mathInput)
         default:
@@ -149,63 +148,36 @@ final class Calculator {
         return mathExpressionElements
     }
     
-    func deleteNumber() -> [String] {
-        guard result == nil else { // If previous result, no change
+    func deleteNumber() -> [String]? {
+        guard result == nil else {
+            return nil
+        }
+        
+        guard let lastElement = mathExpressionElements.last, lastElement.isNumber && !lastElement.contains("e") else {
             return mathExpressionElements
         }
         
-        guard let lastElement = mathExpressionElements.last else {
-            return mathExpressionElements
-        }
-        
-        if lastElement.isNumber && !lastElement.contains("e") {
-            if lastElement.count > 1 {
-                var newLastElement = lastElement
+        if lastElement.count > 1 {
+            var newLastElement = lastElement
+            if lastElement.count == 2 && lastElement.first == "-" {
+                newLastElement.removeLast(2)
+                mathExpressionElements.removeLast()
+                newLastElement = "0"
+            } else {
                 newLastElement.removeLast()
                 mathExpressionElements.removeLast()
-                mathExpressionElements.append(newLastElement)
-            } else {
-                mathExpressionElements.removeLast()
-                mathExpressionElements.append("0")
             }
+            mathExpressionElements.append(newLastElement)
+        } else {
+            mathExpressionElements.removeLast()
+            mathExpressionElements.append("0")
         }
         return mathExpressionElements
     }
     
     func calculate() -> Double? {
-        guard let lastElement = mathExpressionElements.last else {
+        guard let lastElement = mathExpressionElements.last, !lastElement.isArithmeticOperator else {
             return nil
-        }
-        
-        if let previousResult = result {
-            if mathExpressionElements.count == 1 && lastElement.isNumber && Double(lastElement) == previousResult {
-                return previousResult
-            }
-        }
-        
-        // Checking if expression ends with arithmetic operator
-        if lastElement.isArithmeticOperator {
-            // Keep first part of the expression (without the last operator)
-            var elementsFirstPart = mathExpressionElements
-            elementsFirstPart.removeLast()
-            
-            let expressionOne = elementsFirstPart.joined(separator: " ")
-            
-            // Calculating the first part of the expression
-            let operationOne = NSExpression(format: expressionOne)
-            guard let mathValue = operationOne.toFloatingPoint().expressionValue(with: nil, context: nil) as? Double else {
-                return nil
-            }
-            
-            // Calculating result of first part with the last operator
-            // Example: if result of first part is 5 and operator is *, then new expression will be 5 * 5
-            let newExpression = "\(mathValue) \(lastElement) \(mathValue)"
-            let operation = NSExpression(format: newExpression)
-            guard let mathValue = operation.toFloatingPoint().expressionValue(with: nil, context: nil) as? Double else {
-                return nil
-            }
-            result = mathValue
-            return result
         }
         
         if lastElement.last == "." {
@@ -225,17 +197,13 @@ final class Calculator {
     }
     
     func getPercentage() -> [String] {
-        guard let lastElement = mathExpressionElements.last else {
-            return mathExpressionElements
-        }
-        
-        if !lastElement.isNumber {
+        guard let lastElement = mathExpressionElements.last, lastElement.isNumber else {
             return mathExpressionElements
         }
         
         var number: Double = 0
         
-        if result != nil { // If previous result, uses the previous result (except if is an infinite number)
+        if result != nil {
             if result!.isInfinite || result!.isNaN {
                 mathExpressionElements.removeAll()
                 result = nil
@@ -250,9 +218,10 @@ final class Calculator {
             mathExpressionElements.removeLast()
         }
         
-        if number.fractionVisibleCount == 100 {
+        guard number.fractionVisibleCount != 100, number != 0 else {
             return mathExpressionElements
         }
+        
         let lastNumberPercentage = number / 100
         mathExpressionElements.append("\(lastNumberPercentage)")
         return mathExpressionElements
@@ -271,21 +240,21 @@ final class Calculator {
         
         var element: String = ""
         
-        if result != nil { // If previous result, uses the previous result (except if is an infinite number)
-            if result!.isInfinite || result!.isNaN {
+        if let result = self.result {
+            if result.isInfinite || result.isNaN {
                 mathExpressionElements.removeAll()
-                result = nil
+                self.result = nil
                 return mathExpressionElements
             } else {
                 mathExpressionElements.removeAll()
-                let resultStr = "\(result!)"
-                if result?.fraction == 0 {
+                let resultStr = String(result)
+                if !resultStr.contains("e"), result.fraction == 0 {
                     let firstElement = String(resultStr.split(separator: ".").first!)
                     element = firstElement
                 } else {
                     element = resultStr
                 }
-                result = nil
+                self.result = nil
             }
         } else {
             element = lastElement

@@ -10,7 +10,6 @@ import Foundation
 extension String {
     
     /// Convert calculator button text from readable string to math string.
-    /// - Returns: Example: "x" become "*"
     var mathExpression: String {
         return self
             .replacingOccurrences(of: ",", with: ".")
@@ -19,7 +18,6 @@ extension String {
     }
     
     /// Convert calculator button text from math string to readable string.
-    /// - Returns: Example: "*" become "x"
     var readableExpression: String {
         return self
             .replacingOccurrences(of: "*", with: "x")
@@ -27,7 +25,6 @@ extension String {
     }
     
     var isNumber: Bool {
-        // let str = self.replacingOccurrences(of: ",", with: ".")
         return Double(self) != nil
     }
     

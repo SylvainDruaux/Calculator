@@ -7,7 +7,6 @@
 
 import Foundation
 
-// https://stackoverflow.com/questions/46550658/can-i-force-nsexpression-and-expressionvalue-to-assume-doubles-instead-of-ints-s
 extension NSExpression {
     func toFloatingPoint() -> NSExpression {
         switch expressionType {

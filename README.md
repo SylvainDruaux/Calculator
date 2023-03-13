@@ -1,32 +1,62 @@
 #  iOS Calculator 
-A stylish, responsive and MVC iOS calculator app with fundamental arithmetic operations.
 
-MVC Pattern:
-- Model (Calculator/Model/Calculator.swift) contains arithmetic operations and logic.
-- History (Calculator/Model/Calculator.swift) keep an history of past operations. Also part of the Model.
-- Controller (Calculator/Controller/ViewController.swift) calls methods of calculator model in IBActions and updates IBOutlets.
-- View (Calculator/Controller/Main.Storyboard) is created with Storyboard.
+An elegant iOS MVC calculator app, inspired by the official one from Apple.
 
-Responsive Layout:
-- Used stack views.
-- Created constraint variations based on the screen orientation.
+|United States|France|
+|--|--|
+|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-USA.png" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-FRA.png" width="200">|
 
-Adaptive output based on screen orientation and number length:
-- Automatic font adjustment when max character is reached and minus sign added.
-- Use scientific notation when the maximum number of characters allowed is exceeded.
-- Change display of the UITextView in landscape mode only (left alignement).
+## Requirements
 
-Cool Features:
-- The operand buttons act the same as on the official Apple calculator.
-- You can remove a number from the figure being added via a swipe to the right or to the left on the UILabel, as on the official Apple calculator.
-- Automatically scroll to last line when UITextView is full.
-- Double click on AC button, will also clear the history.
+* iOS 16+
+
+## Usage
+
+This application works like the official Apple iOS Calculator, but only with fundamental arithmetic operations.
+It also has a history of past expressions, which can be cleaned by double tapping on the AC button.
+
+## Features
+
+* Responsive Layout from the iPhone SE (3rd Generation) to the last version.
+* Portrait and Landscape mode.
+* Decimal separator and display based on national writing conventions.
+* Adaptive output based on screen orientation and number length:
+    * Limitation of the maximum number of characters allowed:
+        * If the limit is reached:
+            * Automatic font adjustment when adding the minus sign.
+        * If the limit is exceeded:
+            * Convertion of the number in scientific notation.
+* Buttons' behavior, similar to the official Apple app:
+	* Rounded buttons and a Gray/Blue color palette.
+    * Animation effects according to the type of touch event.
+* Removal of a digit from the number being added by swiping right or left.
+* Scrolls automatically to the last line when the history becomes too long.
+* Double tapping on the AC button will also clear the history.
+
+## Structure
+
+This application strives to stick to the MVC architecture pattern.
+* Model
+    * Calculator.swift: Where arithmetic operations and logic happens.
+    * History.swift: Keeps an history of past operations. Also part of the Model.
+* Controller
+    * ViewController.swift: Calls methods of calculator model in IBActions and updates IBOutlets.
+* View
+    * Main.Storyboard: Main screen.
+    * CalculatorButton.swift: Custom class to manage button appearance and animation.
+
+## Demo
+
+|United States|France|
+|--|--|
+|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-USA.gif" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-FRA.gif" width="200">|
+
+### Landscape mode
+
+|United States|France|
+|--|--|
+|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Landscape-USA.png" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Landscape-FRA.png" width="200">|
 
 
-Next steps:
-- Responsiveness on small screen iPhones (under iPhone 11).
-- Add a new cool feature: swiping right or left on UITextView will display expressions with their results.
-- Improve the code.
+## License
 
-Future steps (if enough time):
-- Add some advanced arithmetic operations in landscape mode.
