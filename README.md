@@ -1,2 +1,2 @@
 # Calculator
-A stylish, responsive and MVC iOS calculator app with fundamental arithmetic operations.
+An elegant iOS MVC calculator app, inspired by the official one from Apple.
