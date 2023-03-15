@@ -4,7 +4,7 @@ An elegant iOS MVC calculator app, inspired by the official one from Apple.
 
 |United States|France|
 |--|--|
-|<img src="/Resources/iPhone-14-Pro-Portrait-USA.png" width="200">|<img src="/Resources/iPhone-14-Pro-Portrait-FRA.png" width="200">|
+|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-USA.png" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-FRA.png" width="200">|
 
 ## Requirements
 
@@ -12,7 +12,7 @@ An elegant iOS MVC calculator app, inspired by the official one from Apple.
 
 ## Usage
 
-This application works like the official Apple iOS Calculator, but only with basic arithmetic operations.
+This application works like the official Apple iOS Calculator, but only with fundamental arithmetic operations.
 It also has a history of past expressions, which can be cleaned by double tapping on the AC button.
 
 ## Features
@@ -49,13 +49,13 @@ This application strives to stick to the MVC architecture pattern.
 
 |United States|France|
 |--|--|
-|<img src="/Resources/Demo-iPhone-14-Pro-Portrait-USA.gif" width="200">|<img src="/Resources/Demo-iPhone-14-Pro-Portrait-FRA.gif" width="200">|
+|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-USA.gif" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-FRA.gif" width="200">|
 
 ### Landscape mode
 
 |United States|France|
 |--|--|
-|<img src="/Resources/iPhone-14-Pro-Landscape-USA.png" width="300">|<img src="/Resources/iPhone-14-Pro-Landscape-FRA.png" width="300">|
+|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Landscape-USA.png" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Landscape-FRA.png" width="200">|
 
 
 ## License
