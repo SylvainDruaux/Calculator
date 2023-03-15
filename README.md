@@ -4,7 +4,7 @@ An elegant iOS MVC calculator app, inspired by the official one from Apple.
 
 |United States|France|
 |--|--|
-|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-USA.png" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-FRA.png" width="200">|
+|<img src="/Resources/iPhone-14-Pro-Portrait-USA.png" width="200">|<img src="/Resources/iPhone-14-Pro-Portrait-FRA.png" width="200">|
 
 ## Requirements
 
@@ -12,7 +12,7 @@ An elegant iOS MVC calculator app, inspired by the official one from Apple.
 
 ## Usage
 
-This application works like the official Apple iOS Calculator, but only with fundamental arithmetic operations.
+This application works like the official Apple iOS Calculator, but only with basic arithmetic operations.
 It also has a history of past expressions, which can be cleaned by double tapping on the AC button.
 
 ## Features
@@ -22,10 +22,8 @@ It also has a history of past expressions, which can be cleaned by double tappin
 * Decimal separator and display based on national writing conventions.
 * Adaptive output based on screen orientation and number length:
     * Limitation of the maximum number of characters allowed:
-        * If the limit is reached:
-            * Automatic font adjustment when adding the minus sign.
-        * If the limit is exceeded:
-            * Convertion of the number in scientific notation.
+        * The font will automatically adjust when the limit is reached and a minus sign is added.
+        * The number will be converted into scientific notation if it exceeds the limit.
 * Buttons' behavior, similar to the official Apple app:
 	* Rounded buttons and a Gray/Blue color palette.
     * Animation effects according to the type of touch event.
@@ -49,14 +47,14 @@ This application strives to stick to the MVC architecture pattern.
 
 |United States|France|
 |--|--|
-|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-USA.gif" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Portrait-FRA.gif" width="200">|
+|<img src="/Resources/Demo-iPhone-14-Pro-Portrait-USA.gif" width="200">|<img src="/Resources/Demo-iPhone-14-Pro-Portrait-FRA.gif" width="200">|
 
 ### Landscape mode
 
 |United States|France|
 |--|--|
-|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Landscape-USA.png" width="200">|<img src="https://github.com/SylvainDruaux/Calculator/blob/main/Resources/iPhone-14-Pro-Landscape-FRA.png" width="200">|
-
+|<img src="/Resources/iPhone-14-Pro-Landscape-USA.png" width="300">|<img src="/Resources/iPhone-14-Pro-Landscape-FRA.png" width="300">|
 
 ## License
 
+See LICENSE.md for details
