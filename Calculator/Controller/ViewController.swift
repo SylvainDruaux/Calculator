@@ -17,8 +17,8 @@ final class ViewController: UIViewController {
     @IBOutlet var keysViewConstraint: NSLayoutConstraint!
     
     // MARK: - Properties
-    private var dot = "."
-    private var zero = "0"
+    private let dot = "."
+    private let zero = "0"
     private lazy var decimalSeparator: String = dot
     private let calculator = Calculator()
     private let history = History()
