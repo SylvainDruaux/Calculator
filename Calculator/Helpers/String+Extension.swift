@@ -31,4 +31,12 @@ extension String {
     var isArithmeticOperator: Bool {
         return self == "+" || self == "-" || self == "*" || self == "/"
     }
+    
+    var isScientificNotation: Bool {
+        return self.contains("e")
+    }
+    
+    var startWithMinus: Bool {
+        return self.hasPrefix("-")
+    }
 }

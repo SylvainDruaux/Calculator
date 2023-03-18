@@ -13,13 +13,17 @@ final class Calculator {
     private var mathExpressionElements = [String]()
     
     private var result: Double?
+    private let minusZero = "-0"
+    private let zero = "0"
+    private let dot = "."
+    private let zeroDot = "0."
     
     // MARK: - Methods
     func prepareExpression(_ input: String, _ maxChar: Int = 10) -> [String] {
         let mathInput = input.mathExpression
         
         switch mathInput {
-        case ".":
+        case dot:
             return prepareFromSperator(mathInput)
                         
         case _ where mathInput.isNumber:
@@ -36,26 +40,26 @@ final class Calculator {
     
     private func prepareFromSperator(_ mathInput: String) -> [String] {
         guard let lastElement = mathExpressionElements.last else {
-            mathExpressionElements.append("0.")
+            mathExpressionElements.append(zeroDot)
             return mathExpressionElements
         }
         
         guard result == nil else {
             result = nil
             mathExpressionElements.removeAll()
-            mathExpressionElements.append("0.")
+            mathExpressionElements.append(zeroDot)
             return mathExpressionElements
         }
         
         switch lastElement {
-        case _ where lastElement.contains("."):
+        case _ where lastElement.contains(dot):
             return mathExpressionElements
-        case _ where lastElement.isNumber && !lastElement.contains("."):
+        case _ where lastElement.isNumber && !lastElement.contains(dot):
             let newLastElement = lastElement + mathInput
             mathExpressionElements.removeLast()
             mathExpressionElements.append(newLastElement)
         case _ where lastElement.isArithmeticOperator:
-            mathExpressionElements.append("0.")
+            mathExpressionElements.append(zeroDot)
         default:
             break
         }
@@ -80,12 +84,12 @@ final class Calculator {
         }
         
         switch lastElement {
-        case _ where lastElement == "0" || lastElement == "-0":
+        case _ where lastElement == zero || lastElement == minusZero:
             var newLastElement = lastElement
             newLastElement.removeLast()
             mathExpressionElements.removeLast()
             mathExpressionElements.append(newLastElement + mathInput)
-        case _ where lastElement.last == "." || lastElement.isNumber:
+        case _ where lastElement.last == Character(dot) || lastElement.isNumber:
             let newLastElement = lastElement + mathInput
             mathExpressionElements.removeLast()
             mathExpressionElements.append(newLastElement)
@@ -99,7 +103,7 @@ final class Calculator {
     
     private func prepareFromArithmeticOperator(_ mathInput: String) -> [String] {
         guard let lastElement = mathExpressionElements.last else {
-            mathExpressionElements.append("0")
+            mathExpressionElements.append(zero)
             mathExpressionElements.append(mathInput)
             return mathExpressionElements
         }
@@ -107,13 +111,14 @@ final class Calculator {
         if let result = self.result {
             if result.isInfinite || result.isNaN {
                 mathExpressionElements.removeAll()
-                mathExpressionElements.append("0")
+                mathExpressionElements.append(zero)
                 mathExpressionElements.append(mathInput)
             } else {
                 mathExpressionElements.removeAll()
                 let resultStr = String(result)
-                if !resultStr.contains("e"), result.fraction == 0 {
-                    let firstElement = String(resultStr.split(separator: ".").first!)
+                if !resultStr.isScientificNotation, result.fraction == 0 {
+                    guard let resultStrFirst = resultStr.split(separator: dot).first else { return mathExpressionElements }
+                    let firstElement = String(resultStrFirst)
                     mathExpressionElements.append(firstElement)
                 } else {
                     mathExpressionElements.append(resultStr)
@@ -125,7 +130,7 @@ final class Calculator {
         }
         
         switch lastElement {
-        case _ where lastElement.last == ".":
+        case _ where lastElement.last == Character(dot):
             var newLastElement = lastElement
             newLastElement.removeLast()
             mathExpressionElements.removeLast()
@@ -133,8 +138,9 @@ final class Calculator {
             mathExpressionElements.append(mathInput)
         case _ where lastElement.isNumber:
             let lastElementDouble = Double(lastElement)
-            if !lastElement.contains("e"), lastElementDouble?.fraction == 0 {
-                let newLastElement = String(lastElement.split(separator: ".").first!)
+            if !lastElement.isScientificNotation, lastElementDouble?.fraction == 0 {
+                guard let lastElementFirst = lastElement.split(separator: dot).first else { return mathExpressionElements }
+                let newLastElement = String(lastElementFirst)
                 mathExpressionElements.removeLast()
                 mathExpressionElements.append(newLastElement)
             }
@@ -153,16 +159,16 @@ final class Calculator {
             return nil
         }
         
-        guard let lastElement = mathExpressionElements.last, lastElement.isNumber && !lastElement.contains("e") else {
+        guard let lastElement = mathExpressionElements.last, lastElement.isNumber && !lastElement.isScientificNotation else {
             return mathExpressionElements
         }
         
         if lastElement.count > 1 {
             var newLastElement = lastElement
-            if lastElement.count == 2 && lastElement.first == "-" {
+            if lastElement.count == 2 && lastElement.startWithMinus {
                 newLastElement.removeLast(2)
                 mathExpressionElements.removeLast()
-                newLastElement = "0"
+                newLastElement = zero
             } else {
                 newLastElement.removeLast()
                 mathExpressionElements.removeLast()
@@ -170,7 +176,7 @@ final class Calculator {
             mathExpressionElements.append(newLastElement)
         } else {
             mathExpressionElements.removeLast()
-            mathExpressionElements.append("0")
+            mathExpressionElements.append(zero)
         }
         return mathExpressionElements
     }
@@ -180,7 +186,7 @@ final class Calculator {
             return nil
         }
         
-        if lastElement.last == "." {
+        if lastElement.last == Character(dot) {
             var newLastElement = lastElement
             newLastElement.removeLast()
             mathExpressionElements.removeLast()
@@ -213,8 +219,8 @@ final class Calculator {
                 mathExpressionElements.removeAll()
                 result = nil
             }
-        } else {
-            number = Double(lastElement)!
+        } else if let newNumber = Double(lastElement) {
+            number = newNumber
             mathExpressionElements.removeLast()
         }
         
@@ -229,12 +235,12 @@ final class Calculator {
     
     func getPlusMinus() -> [String] {
         guard let lastElement = mathExpressionElements.last else {
-            mathExpressionElements.append("-0")
+            mathExpressionElements.append(minusZero)
             return mathExpressionElements
         }
         
         if lastElement.isArithmeticOperator {
-            mathExpressionElements.append("-0")
+            mathExpressionElements.append(minusZero)
             return mathExpressionElements
         }
         
@@ -248,8 +254,9 @@ final class Calculator {
             } else {
                 mathExpressionElements.removeAll()
                 let resultStr = String(result)
-                if !resultStr.contains("e"), result.fraction == 0 {
-                    let firstElement = String(resultStr.split(separator: ".").first!)
+                if !resultStr.isScientificNotation, result.fraction == 0 {
+                    guard let resultStrFirst = resultStr.split(separator: dot).first else { return mathExpressionElements }
+                    let firstElement = String(resultStrFirst)
                     element = firstElement
                 } else {
                     element = resultStr
@@ -261,7 +268,7 @@ final class Calculator {
             mathExpressionElements.removeLast()
         }
         
-        if element.hasPrefix("-") {
+        if element.startWithMinus {
             var firstRemoved = element
             firstRemoved.removeFirst()
             mathExpressionElements.append(firstRemoved)

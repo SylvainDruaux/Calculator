@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
     
     // MARK: - Outlets
     @IBOutlet private var historyTextView: UITextView!
@@ -17,7 +17,9 @@ class ViewController: UIViewController {
     @IBOutlet var keysViewConstraint: NSLayoutConstraint!
     
     // MARK: - Properties
-    private lazy var decimalSeparator: String = "."
+    private var dot = "."
+    private var zero = "0"
+    private lazy var decimalSeparator: String = dot
     private let calculator = Calculator()
     private let history = History()
     
@@ -29,7 +31,7 @@ class ViewController: UIViewController {
     
     private var currentInputNumber: Double = 0.0
     
-    private lazy var outputLabelCharSize = ("0" as NSString).size(withAttributes: [.font: outputLabel.font!])
+    private lazy var outputLabelCharSize = (zero as NSString).size(withAttributes: [.font: outputLabel.font!])
     private lazy var swipe: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeGesture(_:)))
     
     // MARK: - Methods
@@ -45,7 +47,7 @@ class ViewController: UIViewController {
     
     private func initOutputs() {
         historyTextView.text = ""
-        outputLabel.text = "0"
+        outputLabel.text = zero
         
         /// Initialize outputLabel to dynamically change font size
         outputLabel.adjustsFontSizeToFitWidth = true
@@ -64,7 +66,7 @@ class ViewController: UIViewController {
     
     private func initDecimalSeparator() {
         let numberFormatter = NumberFormatter()
-        decimalSeparator = numberFormatter.locale.decimalSeparator ?? "."
+        decimalSeparator = numberFormatter.locale.decimalSeparator ?? dot
         separatorButton.setTitle(decimalSeparator, for: .normal)
     }
     
@@ -112,15 +114,13 @@ class ViewController: UIViewController {
     }
     
     private func deselectButton() {
-        if let selected = selectedButton {
-            selected.isSelected = false
-        }
+        selectedButton?.isSelected = false
     }
     
     // MARK: - Actions
     @IBAction private func allClearPressed(_ sender: UIButton) {
         calculator.allClear()
-        outputLabel.text = "0"
+        outputLabel.text = zero
         currentInputNumber = 0.0
         deselectButton()
         scrollTextView()
@@ -192,89 +192,92 @@ private extension ViewController {
                 currentInputNumber = Double(lastElement)!
             }
             
-            /// Update expression for history and historyTextView
-            var expressionElements = [String]()
-            for element in mathElements {
-                if element.isArithmeticOperator {
-                    expressionElements.append(element.readableExpression)
-                } else {
-                    if element.last == "." {
-                        var tmpElement = element
-                        tmpElement.removeLast()
-                        if let newElement = Double(tmpElement)?.decimalNotation {
-                            expressionElements.append(newElement + decimalSeparator)
-                        }
-                    } else {
-                        guard let number = Double(element) else {
-                            return
-                        }
-                        if !element.contains("e") && element.count <= maxCharDefault && element.contains(".") && number.fraction == 0 {
-                            let fractionDigits = element.split(separator: ".").last ?? ""
-                            expressionElements.append(number.decimalNotation + decimalSeparator + fractionDigits)
-                        } else {
-                            expressionElements.append(number.displayAdjusted(10))
-                        }
-                    }
-                }
-            }
-            
-            let expression = expressionElements.joined(separator: " ")
-            history.updateHistory(expression)
-            historyTextView.text = history.getHistory().joined(separator: "\n")
-            
-            /// Update current displayed number (outputLabel)
-            if lastElement.last == "." {
-                var tmpElement = lastElement
-                tmpElement.removeLast()
-                if let newElement = Double(tmpElement)?.decimalNotation {
-                    outputLabel.text = newElement + decimalSeparator
-                }
+            updateHistoryView(from: mathElements)
+            updateOutputLabel(from: lastElement)
+        }
+    }
+    
+    /// Update expression for history and historyTextView
+    func updateHistoryView(from mathElements: [String]) {
+        var expressionElements = [String]()
+        for element in mathElements {
+            if element.isArithmeticOperator {
+                expressionElements.append(element.readableExpression)
             } else {
-                guard let lastNumber = Double(lastElement) else {
-                    return
-                }
-                if !lastElement.contains("e") && lastElement.count <= maxChar && lastElement.contains(".") {
-                    let fractionDigits = lastElement.split(separator: ".").last ?? ""
-                    guard let lastNumberInteger = lastNumber.decimalNotation.split(separator: decimalSeparator).first else {
+                if element.last == Character(dot) {
+                    var tmpElement = element
+                    tmpElement.removeLast()
+                    if let newElement = Double(tmpElement)?.decimalNotation {
+                        expressionElements.append(newElement + decimalSeparator)
+                    }
+                } else {
+                    guard let number = Double(element) else {
                         return
                     }
-                    outputLabel.text = lastNumberInteger + decimalSeparator + fractionDigits
-                } else {
-                    outputLabel.text = lastNumber.displayAdjusted(maxChar)
+                    if !element.isScientificNotation && element.count <= maxCharDefault && element.contains(dot) && number.fraction == 0 {
+                        let fractionDigits = element.split(separator: dot).last ?? ""
+                        expressionElements.append(number.decimalNotation + decimalSeparator + fractionDigits)
+                    } else {
+                        expressionElements.append(number.displayAdjusted(10))
+                    }
                 }
             }
-            scrollTextView()
+        }
+        
+        let expression = expressionElements.joined(separator: " ")
+        history.updateHistory(expression)
+        historyTextView.text = history.getHistory().joined(separator: "\n")
+        scrollTextView()
+    }
+    
+    /// Update current displayed number (outputLabel)
+    func updateOutputLabel(from lastElement: String) {
+        if lastElement.last == Character(dot) {
+            var tmpElement = lastElement
+            tmpElement.removeLast()
+            if let newElement = Double(tmpElement)?.decimalNotation {
+                outputLabel.text = newElement + decimalSeparator
+            }
+        } else if let lastNumber = Double(lastElement) {
+            if !lastElement.isScientificNotation && lastElement.count <= maxChar && lastElement.contains(dot) {
+                let fractionDigits = lastElement.split(separator: dot).last ?? ""
+                guard let lastNumberInteger = lastNumber.decimalNotation.split(separator: decimalSeparator).first else {
+                    return
+                }
+                outputLabel.text = lastNumberInteger + decimalSeparator + fractionDigits
+            } else {
+                outputLabel.text = lastNumber.displayAdjusted(maxChar)
+            }
         }
     }
     
     func updateViewFromResult(_ result: Double?) {
-        if let resultNumber = result {
-            if resultNumber.isInfinite || resultNumber.isNaN {
-                currentInputNumber = 0.0
-                outputLabel.text = "Error"
-            } else {
-                currentInputNumber = resultNumber
-                var records = history.getHistory()
-                if let lastRecord = records.last {
-                    if lastRecord.last == Character(decimalSeparator) {
-                        var newlastRecord = lastRecord
-                        newlastRecord.removeLast()
-                        records.removeLast()
-                        records.append(newlastRecord)
-                        history.updateHistory(newlastRecord)
-                    }
+        guard let resultNumber = result else { return }
+        if resultNumber.isInfinite || resultNumber.isNaN {
+            currentInputNumber = 0.0
+            outputLabel.text = "Error"
+        } else {
+            currentInputNumber = resultNumber
+            var records = history.getHistory()
+            if let lastRecord = records.last {
+                if lastRecord.last == Character(decimalSeparator) {
+                    var newlastRecord = lastRecord
+                    newlastRecord.removeLast()
+                    records.removeLast()
+                    records.append(newlastRecord)
+                    history.updateHistory(newlastRecord)
                 }
-                
-                /// Add a new empty line to the history for next expression
-                if let lastRecord = records.last, !lastRecord.isEmpty {
-                    history.addExpression("")
-                }
-                
-                /// Update outputs
-                historyTextView.text = records.joined(separator: "\n")
-                outputLabel.text = currentInputNumber.displayAdjusted(maxChar)
             }
-            scrollTextView()
+            
+            /// Add a new empty line to the history for next expression
+            if let lastRecord = records.last, !lastRecord.isEmpty {
+                history.addExpression("")
+            }
+            
+            /// Update outputs
+            historyTextView.text = records.joined(separator: "\n")
+            outputLabel.text = currentInputNumber.displayAdjusted(maxChar)
         }
+        scrollTextView()
     }
 }
