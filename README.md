@@ -1,60 +1,59 @@
 #  iOS Calculator 
 
-An elegant iOS MVC calculator app, inspired by the official one from Apple.
+An elegant calculator app for iOS, inspired by Apple's official design.
 
 |United States|France|
 |--|--|
-|<img src="/Resources/iPhone-14-Pro-Portrait-USA.png" width="200">|<img src="/Resources/iPhone-14-Pro-Portrait-FRA.png" width="200">|
+|<img src="Resources/iPhone-14-Pro-Portrait-USA.png" width="200">|<img src="Resources/iPhone-14-Pro-Portrait-FRA.png" width="200">|
 
 ## Requirements
 
 * iOS 16+
 
-## Usage
-
-This application works like the official Apple iOS Calculator, but only with basic arithmetic operations.
-It also has a history of past expressions, which can be cleaned by double tapping on the AC button.
-
 ## Features
 
 * Responsive Layout from the iPhone SE (3rd Generation) to the last version.
-* Portrait and Landscape mode.
+* Supports both portrait and landscape modes.
 * Decimal separator and display based on national writing conventions.
 * Adaptive output based on screen orientation and number length:
-    * Limitation of the maximum number of characters allowed:
-        * The font will automatically adjust when the limit is reached and a minus sign is added.
-        * The number will be converted into scientific notation if it exceeds the limit.
-* Buttons' behavior, similar to the official Apple app:
+    * Maximum character limit enforced:
+        * Font automatically adjusts when the limit is reached, and a minus sign is added.
+        * Numbers exceeding the limit are converted into scientific notation.
+* Buttons' behavior mirroring that of the official Apple app:
 	* Rounded buttons and a Gray/Blue color palette.
-    * Animation effects according to the type of touch event.
-* Removal of a digit from the number being added by swiping right or left.
-* Scrolls automatically to the last line when the history becomes too long.
-* Double tapping on the AC button will also clear the history.
+    * Animation effects corresponding to the touch event type.
+* Digit removal from added number by swiping right or left.
+* Automatic scrolling to the last line when history becomes lengthy.
+* Double-tapping the AC button also clears the history.
 
-## Structure
+## Technologies Used
 
-This application strives to stick to the MVC architecture pattern.
-* Model
-    * Calculator.swift: Where arithmetic operations and logic happens.
-    * History.swift: Keeps an history of past operations. Also part of the Model.
-* Controller
-    * ViewController.swift: Calls methods of calculator model in IBActions and updates IBOutlets.
-* View
-    * Main.Storyboard: Main screen.
-    * CalculatorButton.swift: Custom class to manage button appearance and animation.
+* UX/UI: UIKit, via storyboard and code.
+
+## Usage
+
+This app works like the official Apple iOS Calculator, supporting basic arithmetic.
+It also has a history of past expressions, which can be cleaned by double tapping on the AC button.
+
+## Installation
+
+1. Clone or download the repository.
+2. Open the project in Xcode.
+
+## Architecture
+
+* MVC Architecture.
 
 ## Demo
 
 |United States|France|
 |--|--|
-|<img src="/Resources/Demo-iPhone-14-Pro-Portrait-USA.gif" width="200">|<img src="/Resources/Demo-iPhone-14-Pro-Portrait-FRA.gif" width="200">|
-
-### Landscape mode
+|<img src="Resources/Demo-iPhone-14-Pro-Portrait-USA.gif" width="200">|<img src="Resources/Demo-iPhone-14-Pro-Portrait-FRA.gif" width="200">|
 
 |United States|France|
 |--|--|
-|<img src="/Resources/iPhone-14-Pro-Landscape-USA.png" width="300">|<img src="/Resources/iPhone-14-Pro-Landscape-FRA.png" width="300">|
+|<img src="Resources/iPhone-14-Pro-Landscape-USA.png" width="300">|<img src="Resources/iPhone-14-Pro-Landscape-FRA.png" width="300">|
 
 ## License
 
-See LICENSE.md for details
+See [LICENSE.md](LICENSE.md) for details
