@@ -16,9 +16,8 @@ An elegant calculator app for iOS, inspired by Apple's official design.
 * Supports both portrait and landscape modes.
 * Decimal separator and display based on national writing conventions.
 * Adaptive output based on screen orientation and number length:
-    * Maximum character limit enforced:
-        * Font automatically adjusts when the limit is reached, and a minus sign is added.
-        * Numbers exceeding the limit are converted into scientific notation.
+    * Font automatically adjusts when the limit is reached, and a minus sign is added.
+    * Numbers exceeding the limit are converted into scientific notation.
 * Buttons' behavior mirroring that of the official Apple app:
 	* Rounded buttons and a Gray/Blue color palette.
     * Animation effects corresponding to the touch event type.
