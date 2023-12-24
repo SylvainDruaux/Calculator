@@ -8,81 +8,83 @@
 import UIKit
 
 final class ViewController: UIViewController {
-    
     // MARK: - Outlets
+
     @IBOutlet private var historyTextView: UITextView!
     @IBOutlet private var outputLabel: UILabel!
     @IBOutlet private var separatorButton: UIButton!
     @IBOutlet private var allClearButton: UIButton!
     @IBOutlet var keysViewConstraint: NSLayoutConstraint!
-    
+
     // MARK: - Properties
+
     private let dot = "."
     private let zero = "0"
     private lazy var decimalSeparator: String = dot
     private let calculator = Calculator()
     private let history = History()
-    
+
     private var maxCharDefault: Int = 0
     private var maxChar: Int = 0
-    
+
     private var selectedButton: UIButton?
     private var previousClickTime: Date?
-    
+
     private var currentInputNumber: Double = 0.0
-    
+
     private lazy var outputLabelCharSize = (zero as NSString).size(withAttributes: [.font: outputLabel.font!])
-    private lazy var swipe: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeGesture(_:)))
-    
+    private lazy var swipe: UISwipeGestureRecognizer = .init(target: self, action: #selector(self.swipeGesture(_:)))
+
     // MARK: - Methods
+
     override func viewDidLoad() {
         super.viewDidLoad()
         initOutputs()
         initMaxChar()
         initDecimalSeparator()
-        
+
         /// Add a target to allClearButton to handle double click
         allClearButton.addTarget(self, action: #selector(allClearPressed), for: .touchUpInside)
     }
-    
+
     private func initOutputs() {
         historyTextView.text = ""
         outputLabel.text = zero
-        
+
         /// Initialize outputLabel to dynamically change font size
         outputLabel.adjustsFontSizeToFitWidth = true
         outputLabel.minimumScaleFactor = 0.5
-        
+
         /// Swipe Gesture of outputLabel
         swipe.direction = [.left, .right]
         outputLabel.addGestureRecognizer(swipe)
     }
-    
+
     /// Get maximum number of characters per line in outputLabel (default value in portrait mode)
     private func initMaxChar() {
         maxCharDefault = Int(outputLabel.bounds.width / outputLabelCharSize.width) + 1
         maxChar = maxCharDefault
     }
-    
+
     private func initDecimalSeparator() {
         let numberFormatter = NumberFormatter()
         decimalSeparator = numberFormatter.locale.decimalSeparator ?? dot
         separatorButton.setTitle(decimalSeparator, for: .normal)
     }
-    
+
     /// Detect orientation changes and apply view modifications
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         setCharPerLine()
     }
-    
+
     /// Set max characters per line, based on screen orientation
     private func setCharPerLine() {
         if UIDevice.current.orientation.isLandscape {
             maxChar = 16
-            keysViewConstraint.constant = self.view.safeAreaLayoutGuide.layoutFrame.height * 0.6
+            keysViewConstraint.constant = view.safeAreaLayoutGuide.layoutFrame.height * 0.6
             scrollTextView()
-            
+
             if currentInputNumber != 0.0 {
                 outputLabel.text = currentInputNumber.displayAdjusted(maxChar)
             }
@@ -91,7 +93,7 @@ final class ViewController: UIViewController {
         } else {
             maxChar = maxCharDefault
             scrollTextView()
-            
+
             if currentInputNumber != 0.0 {
                 outputLabel.text = currentInputNumber.displayAdjusted(maxChar)
             }
@@ -99,7 +101,7 @@ final class ViewController: UIViewController {
             historyTextView.textContainerInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         }
     }
-    
+
     /// Set swipe gesture to remove a digit from the number being entered
     @objc private func swipeGesture(_ sender: UISwipeGestureRecognizer) {
         guard let mathExpressionElements = calculator.deleteNumber() else {
@@ -107,25 +109,26 @@ final class ViewController: UIViewController {
         }
         updateViewFromExpression(mathExpressionElements)
     }
-    
+
     private func scrollTextView() {
         let range = NSRange(location: historyTextView.text.count - 1, length: 0)
         historyTextView.scrollRangeToVisible(range)
     }
-    
+
     private func deselectButton() {
         selectedButton?.isSelected = false
     }
-    
+
     // MARK: - Actions
+
     @IBAction private func allClearPressed(_ sender: UIButton) {
         calculator.allClear()
         outputLabel.text = zero
         currentInputNumber = 0.0
         deselectButton()
         scrollTextView()
-        
-        if let previousClickTime = previousClickTime {
+
+        if let previousClickTime {
             let timeDiff = Date().timeIntervalSince(previousClickTime)
             if timeDiff < 0.5 {
                 historyTextView.text = ""
@@ -134,45 +137,48 @@ final class ViewController: UIViewController {
         }
         previousClickTime = Date()
     }
-    
+
     @IBAction private func plusMinusPressed(_ sender: UIButton) {
         let mathExpressionElements = calculator.getPlusMinus()
         updateViewFromExpression(mathExpressionElements)
     }
-    
+
     @IBAction private func percentPressed(_ sender: UIButton) {
         let mathExpressionElements = calculator.getPercentage()
         updateViewFromExpression(mathExpressionElements)
     }
-    
+
     @IBAction private func numberPressed(_ sender: UIButton) {
         guard let buttonText = sender.titleLabel?.text else {
-            return }
+            return
+        }
         deselectButton()
         let mathExpressionElements = calculator.prepareExpression(buttonText, maxChar)
         updateViewFromExpression(mathExpressionElements)
     }
-    
+
     @IBAction private func operatorPressed(_ sender: UIButton) {
         guard let buttonText = sender.title(for: .normal) else {
-            return }
+            return
+        }
         deselectButton()
         sender.isSelected = true
         selectedButton = sender
-        
+
         let mathExpressionElements = calculator.prepareExpression(buttonText)
         updateViewFromExpression(mathExpressionElements)
     }
-    
+
     @IBAction private func equalPressed(_ sender: UIButton) {
         deselectButton()
         let result = calculator.calculate()
         updateViewFromResult(result)
     }
-    
+
     @IBAction private func separatorPressed(_ sender: UIButton) {
         guard let buttonText = sender.titleLabel?.text else {
-            return }
+            return
+        }
         deselectButton()
         let mathExpressionElements = calculator.prepareExpression(buttonText, maxChar)
         updateViewFromExpression(mathExpressionElements)
@@ -180,23 +186,24 @@ final class ViewController: UIViewController {
 }
 
 // MARK: - View update Private Methods
+
 private extension ViewController {
     func updateViewFromExpression(_ mathExpressionElements: [String]?) {
         if let mathElements = mathExpressionElements {
             guard let lastElement = mathExpressionElements?.last else {
                 return
             }
-            
+
             /// Update Current input number (for change from landscape mode to portrait mode)
             if lastElement.isNumber {
                 currentInputNumber = Double(lastElement)!
             }
-            
+
             updateHistoryView(from: mathElements)
             updateOutputLabel(from: lastElement)
         }
     }
-    
+
     /// Update expression for history and historyTextView
     func updateHistoryView(from mathElements: [String]) {
         var expressionElements = [String]()
@@ -214,7 +221,7 @@ private extension ViewController {
                     guard let number = Double(element) else {
                         return
                     }
-                    if !element.isScientificNotation && element.count <= maxCharDefault && element.contains(dot) && number.fraction == 0 {
+                    if !element.isScientificNotation, element.count <= maxCharDefault, element.contains(dot), number.fraction == 0 {
                         let fractionDigits = element.split(separator: dot).last ?? ""
                         expressionElements.append(number.decimalNotation + decimalSeparator + fractionDigits)
                     } else {
@@ -223,13 +230,13 @@ private extension ViewController {
                 }
             }
         }
-        
+
         let expression = expressionElements.joined(separator: " ")
         history.updateHistory(expression)
         historyTextView.text = history.getHistory().joined(separator: "\n")
         scrollTextView()
     }
-    
+
     /// Update current displayed number (outputLabel)
     func updateOutputLabel(from lastElement: String) {
         if lastElement.last == Character(dot) {
@@ -239,7 +246,7 @@ private extension ViewController {
                 outputLabel.text = newElement + decimalSeparator
             }
         } else if let lastNumber = Double(lastElement) {
-            if !lastElement.isScientificNotation && lastElement.count <= maxChar && lastElement.contains(dot) {
+            if !lastElement.isScientificNotation, lastElement.count <= maxChar, lastElement.contains(dot) {
                 let fractionDigits = lastElement.split(separator: dot).last ?? ""
                 guard let lastNumberInteger = lastNumber.decimalNotation.split(separator: decimalSeparator).first else {
                     return
@@ -250,7 +257,7 @@ private extension ViewController {
             }
         }
     }
-    
+
     func updateViewFromResult(_ result: Double?) {
         guard let resultNumber = result else { return }
         if resultNumber.isInfinite || resultNumber.isNaN {
@@ -268,12 +275,12 @@ private extension ViewController {
                     history.updateHistory(newlastRecord)
                 }
             }
-            
+
             /// Add a new empty line to the history for next expression
             if let lastRecord = records.last, !lastRecord.isEmpty {
                 history.addExpression("")
             }
-            
+
             /// Update outputs
             historyTextView.text = records.joined(separator: "\n")
             outputLabel.text = currentInputNumber.displayAdjusted(maxChar)

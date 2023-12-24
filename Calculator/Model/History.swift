@@ -9,11 +9,11 @@ import Foundation
 
 final class History {
     private var expressionHistory = [String]()
-    
-    func addExpression(_ expression: String ) {
+
+    func addExpression(_ expression: String) {
         expressionHistory.append(expression)
     }
-    
+
     func updateHistory(_ expression: String) {
         if expressionHistory.isEmpty {
             addExpression(expression)
@@ -22,11 +22,11 @@ final class History {
             addExpression(expression)
         }
     }
-    
+
     func getHistory() -> [String] {
-        return expressionHistory
+        expressionHistory
     }
-    
+
     func clear() {
         expressionHistory.removeAll()
     }

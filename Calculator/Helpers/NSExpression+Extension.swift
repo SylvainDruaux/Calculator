@@ -15,10 +15,10 @@ extension NSExpression {
                 return NSExpression(forConstantValue: NSNumber(value: value.doubleValue))
             }
         case .function:
-           let newArgs = arguments.map { $0.map { $0.toFloatingPoint() } }
-           return NSExpression(forFunction: operand, selectorName: function, arguments: newArgs)
+            let newArgs = arguments.map { $0.map { $0.toFloatingPoint() } }
+            return NSExpression(forFunction: operand, selectorName: function, arguments: newArgs)
         case .conditional:
-           return NSExpression(forConditional: predicate, trueExpression: self.true.toFloatingPoint(), falseExpression: self.false.toFloatingPoint())
+            return NSExpression(forConditional: predicate, trueExpression: self.true.toFloatingPoint(), falseExpression: self.false.toFloatingPoint())
         case .unionSet:
             return NSExpression(forUnionSet: left.toFloatingPoint(), with: right.toFloatingPoint())
         case .intersectSet:
