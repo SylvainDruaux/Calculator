@@ -8,49 +8,50 @@
 import Foundation
 
 final class Calculator {
-    
     // MARK: - Properties
+
     private var mathExpressionElements = [String]()
-    
+
     private var result: Double?
     private let minusZero = "-0"
     private let zero = "0"
     private let dot = "."
     private let zeroDot = "0."
-    
+
     // MARK: - Methods
+
     func prepareExpression(_ input: String, _ maxChar: Int = 10) -> [String] {
         let mathInput = input.mathExpression
-        
+
         switch mathInput {
         case dot:
             return prepareFromSperator(mathInput)
-                        
+
         case _ where mathInput.isNumber:
             return prepareFromNumber(mathInput, maxChar)
-            
+
         case _ where mathInput.isArithmeticOperator:
             return prepareFromArithmeticOperator(mathInput)
-            
+
         default:
             break
         }
         return mathExpressionElements
     }
-    
+
     private func prepareFromSperator(_ mathInput: String) -> [String] {
         guard let lastElement = mathExpressionElements.last else {
             mathExpressionElements.append(zeroDot)
             return mathExpressionElements
         }
-        
+
         guard result == nil else {
             result = nil
             mathExpressionElements.removeAll()
             mathExpressionElements.append(zeroDot)
             return mathExpressionElements
         }
-        
+
         switch lastElement {
         case _ where lastElement.contains(dot):
             return mathExpressionElements
@@ -65,24 +66,24 @@ final class Calculator {
         }
         return mathExpressionElements
     }
-    
+
     private func prepareFromNumber(_ mathInput: String, _ maxChar: Int) -> [String] {
         guard let lastElement = mathExpressionElements.last else {
             mathExpressionElements.append(mathInput)
             return mathExpressionElements
         }
-        
+
         guard result == nil else {
             result = nil
             mathExpressionElements.removeAll()
             mathExpressionElements.append(mathInput)
             return mathExpressionElements
         }
-        
+
         guard lastElement.count < maxChar else {
             return mathExpressionElements
         }
-        
+
         switch lastElement {
         case _ where lastElement == zero || lastElement == minusZero:
             var newLastElement = lastElement
@@ -100,15 +101,15 @@ final class Calculator {
         }
         return mathExpressionElements
     }
-    
+
     private func prepareFromArithmeticOperator(_ mathInput: String) -> [String] {
         guard let lastElement = mathExpressionElements.last else {
             mathExpressionElements.append(zero)
             mathExpressionElements.append(mathInput)
             return mathExpressionElements
         }
-        
-        if let result = self.result {
+
+        if let result {
             if result.isInfinite || result.isNaN {
                 mathExpressionElements.removeAll()
                 mathExpressionElements.append(zero)
@@ -128,7 +129,7 @@ final class Calculator {
             self.result = nil
             return mathExpressionElements
         }
-        
+
         switch lastElement {
         case _ where lastElement.last == Character(dot):
             var newLastElement = lastElement
@@ -153,19 +154,19 @@ final class Calculator {
         }
         return mathExpressionElements
     }
-    
+
     func deleteNumber() -> [String]? {
         guard result == nil else {
             return nil
         }
-        
-        guard let lastElement = mathExpressionElements.last, lastElement.isNumber && !lastElement.isScientificNotation else {
+
+        guard let lastElement = mathExpressionElements.last, lastElement.isNumber, !lastElement.isScientificNotation else {
             return mathExpressionElements
         }
-        
+
         if lastElement.count > 1 {
             var newLastElement = lastElement
-            if lastElement.count == 2 && lastElement.startWithMinus {
+            if lastElement.count == 2, lastElement.startWithMinus {
                 newLastElement.removeLast(2)
                 mathExpressionElements.removeLast()
                 newLastElement = zero
@@ -180,19 +181,19 @@ final class Calculator {
         }
         return mathExpressionElements
     }
-    
+
     func calculate() -> Double? {
         guard let lastElement = mathExpressionElements.last, !lastElement.isArithmeticOperator else {
             return nil
         }
-        
+
         if lastElement.last == Character(dot) {
             var newLastElement = lastElement
             newLastElement.removeLast()
             mathExpressionElements.removeLast()
             mathExpressionElements.append(newLastElement)
         }
-        
+
         let mathExpression = mathExpressionElements.joined(separator: " ")
         let operation = NSExpression(format: mathExpression)
         guard let mathValue = operation.toFloatingPoint().expressionValue(with: nil, context: nil) as? Double else {
@@ -201,14 +202,14 @@ final class Calculator {
         result = mathValue
         return result
     }
-    
+
     func getPercentage() -> [String] {
         guard let lastElement = mathExpressionElements.last, lastElement.isNumber else {
             return mathExpressionElements
         }
-        
+
         var number: Double = 0
-        
+
         if result != nil {
             if result!.isInfinite || result!.isNaN {
                 mathExpressionElements.removeAll()
@@ -223,30 +224,30 @@ final class Calculator {
             number = newNumber
             mathExpressionElements.removeLast()
         }
-        
+
         guard number.fractionVisibleCount != 100, number != 0 else {
             return mathExpressionElements
         }
-        
+
         let lastNumberPercentage = number / 100
         mathExpressionElements.append("\(lastNumberPercentage)")
         return mathExpressionElements
     }
-    
+
     func getPlusMinus() -> [String] {
         guard let lastElement = mathExpressionElements.last else {
             mathExpressionElements.append(minusZero)
             return mathExpressionElements
         }
-        
+
         if lastElement.isArithmeticOperator {
             mathExpressionElements.append(minusZero)
             return mathExpressionElements
         }
-        
-        var element: String = ""
-        
-        if let result = self.result {
+
+        var element = ""
+
+        if let result {
             if result.isInfinite || result.isNaN {
                 mathExpressionElements.removeAll()
                 self.result = nil
@@ -267,7 +268,7 @@ final class Calculator {
             element = lastElement
             mathExpressionElements.removeLast()
         }
-        
+
         if element.startWithMinus {
             var firstRemoved = element
             firstRemoved.removeFirst()
@@ -279,7 +280,7 @@ final class Calculator {
         }
         return mathExpressionElements
     }
-    
+
     func allClear() {
         mathExpressionElements.removeAll()
         result = nil

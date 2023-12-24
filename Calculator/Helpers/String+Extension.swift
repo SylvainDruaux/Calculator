@@ -8,35 +8,32 @@
 import Foundation
 
 extension String {
-    
     /// Convert calculator button text from readable string to math string.
     var mathExpression: String {
-        return self
-            .replacingOccurrences(of: ",", with: ".")
+        replacingOccurrences(of: ",", with: ".")
             .replacingOccurrences(of: "x", with: "*")
             .replacingOccurrences(of: "÷", with: "/")
     }
-    
+
     /// Convert calculator button text from math string to readable string.
     var readableExpression: String {
-        return self
-            .replacingOccurrences(of: "*", with: "x")
+        replacingOccurrences(of: "*", with: "x")
             .replacingOccurrences(of: "/", with: "÷")
     }
-    
+
     var isNumber: Bool {
-        return Double(self) != nil
+        Double(self) != nil
     }
-    
+
     var isArithmeticOperator: Bool {
-        return self == "+" || self == "-" || self == "*" || self == "/"
+        self == "+" || self == "-" || self == "*" || self == "/"
     }
-    
+
     var isScientificNotation: Bool {
-        return self.contains("e")
+        contains("e")
     }
-    
+
     var startWithMinus: Bool {
-        return self.hasPrefix("-")
+        hasPrefix("-")
     }
 }
