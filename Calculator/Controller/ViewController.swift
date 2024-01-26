@@ -14,7 +14,7 @@ final class ViewController: UIViewController {
     @IBOutlet private var outputLabel: UILabel!
     @IBOutlet private var separatorButton: UIButton!
     @IBOutlet private var allClearButton: UIButton!
-    @IBOutlet var keysViewConstraint: NSLayoutConstraint!
+    @IBOutlet private var keysViewConstraint: NSLayoutConstraint!
 
     // MARK: - Properties
 
@@ -35,7 +35,7 @@ final class ViewController: UIViewController {
     private lazy var outputLabelCharSize = (zero as NSString).size(withAttributes: [.font: outputLabel.font!])
     private lazy var swipe: UISwipeGestureRecognizer = .init(target: self, action: #selector(self.swipeGesture(_:)))
 
-    // MARK: - Methods
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,31 +45,6 @@ final class ViewController: UIViewController {
 
         /// Add a target to allClearButton to handle double click
         allClearButton.addTarget(self, action: #selector(allClearPressed), for: .touchUpInside)
-    }
-
-    private func initOutputs() {
-        historyTextView.text = ""
-        outputLabel.text = zero
-
-        /// Initialize outputLabel to dynamically change font size
-        outputLabel.adjustsFontSizeToFitWidth = true
-        outputLabel.minimumScaleFactor = 0.5
-
-        /// Swipe Gesture of outputLabel
-        swipe.direction = [.left, .right]
-        outputLabel.addGestureRecognizer(swipe)
-    }
-
-    /// Get maximum number of characters per line in outputLabel (default value in portrait mode)
-    private func initMaxChar() {
-        maxCharDefault = Int(outputLabel.bounds.width / outputLabelCharSize.width) + 1
-        maxChar = maxCharDefault
-    }
-
-    private func initDecimalSeparator() {
-        let numberFormatter = NumberFormatter()
-        decimalSeparator = numberFormatter.locale.decimalSeparator ?? dot
-        separatorButton.setTitle(decimalSeparator, for: .normal)
     }
 
     /// Detect orientation changes and apply view modifications
@@ -108,15 +83,6 @@ final class ViewController: UIViewController {
             return
         }
         updateViewFromExpression(mathExpressionElements)
-    }
-
-    private func scrollTextView() {
-        let range = NSRange(location: historyTextView.text.count - 1, length: 0)
-        historyTextView.scrollRangeToVisible(range)
-    }
-
-    private func deselectButton() {
-        selectedButton?.isSelected = false
     }
 
     // MARK: - Actions
@@ -185,9 +151,34 @@ final class ViewController: UIViewController {
     }
 }
 
-// MARK: - View update Private Methods
+// MARK: - View
 
 private extension ViewController {
+    func initOutputs() {
+        historyTextView.text = ""
+        outputLabel.text = zero
+
+        /// Initialize outputLabel to dynamically change font size
+        outputLabel.adjustsFontSizeToFitWidth = true
+        outputLabel.minimumScaleFactor = 0.5
+
+        /// Swipe Gesture of outputLabel
+        swipe.direction = [.left, .right]
+        outputLabel.addGestureRecognizer(swipe)
+    }
+
+    /// Get maximum number of characters per line in outputLabel (default value in portrait mode)
+    func initMaxChar() {
+        maxCharDefault = Int(outputLabel.bounds.width / outputLabelCharSize.width) + 1
+        maxChar = maxCharDefault
+    }
+
+    func initDecimalSeparator() {
+        let numberFormatter = NumberFormatter()
+        decimalSeparator = numberFormatter.locale.decimalSeparator ?? dot
+        separatorButton.setTitle(decimalSeparator, for: .normal)
+    }
+
     func updateViewFromExpression(_ mathExpressionElements: [String]?) {
         if let mathElements = mathExpressionElements {
             guard let lastElement = mathExpressionElements?.last else {
@@ -286,5 +277,14 @@ private extension ViewController {
             outputLabel.text = currentInputNumber.displayAdjusted(maxChar)
         }
         scrollTextView()
+    }
+
+    func scrollTextView() {
+        let range = NSRange(location: historyTextView.text.count - 1, length: 0)
+        historyTextView.scrollRangeToVisible(range)
+    }
+
+    func deselectButton() {
+        selectedButton?.isSelected = false
     }
 }
