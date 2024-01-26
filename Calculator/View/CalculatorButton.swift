@@ -18,34 +18,46 @@ import UIKit
     private var originalTitleColor: UIColor?
     private var animator = UIViewPropertyAnimator()
 
-    // MARK: - Methods
+    // MARK: - Lifecycle
 
     override func awakeFromNib() {
         super.awakeFromNib()
         setup()
     }
 
-    private func setup() {
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateCornerRadius()
+    }
+
+    // MARK: - Actions
+
+    @objc func touchDown() {
+        stopAnimation(true)
+        backgroundColor = originalBackgroundColor?.lighter(by: 15)
+    }
+
+    @objc func touchUp() {
+        setupAnimator()
+        startAnimation()
+    }
+}
+
+// MARK: - View
+
+private extension CalculatorButton {
+    func setup() {
         tintColor = .clear
         saveBackgroundColor()
         saveTitleColor()
         setupInteraction()
     }
 
-    private func setupInteraction() {
+    func setupInteraction() {
         addTarget(self, action: #selector(touchDown), for: [.touchDown, .touchDragEnter])
         addTarget(self, action: #selector(touchUp), for: [.touchUpInside, .touchDragExit, .touchCancel])
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        updateCornerRadius()
-    }
-}
-
-// MARK: - Other Private Methods
-
-private extension CalculatorButton {
     func startAnimation() {
         animator.startAnimation()
     }
@@ -94,19 +106,5 @@ private extension CalculatorButton {
 
     func initAnimator(with animation: (() -> Void)?) -> UIViewPropertyAnimator {
         UIViewPropertyAnimator(duration: 0.5, curve: .easeOut, animations: animation)
-    }
-}
-
-// MARK: - Action Methods
-
-extension CalculatorButton {
-    @objc func touchDown() {
-        stopAnimation(true)
-        backgroundColor = originalBackgroundColor?.lighter(by: 15)
-    }
-
-    @objc func touchUp() {
-        setupAnimator()
-        startAnimation()
     }
 }
